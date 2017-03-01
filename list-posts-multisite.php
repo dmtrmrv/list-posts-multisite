@@ -6,7 +6,7 @@
  *
  * Plugin Name: List Posts Multisite
  * Description: Easily list links to posts from any site across your multisite network.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Dmitry Mayorov
  * Author URI:  https://themepatio.com/
  * License:     GPL-2.0+
@@ -32,6 +32,7 @@ function lpm_list_posts( $atts ) {
 		'post__not_in'   => '',
 		'posts_per_page' => 99,
 		'class'          => '',
+		'before_link'    => '',
 	), $atts );
 
 	// Proceed only if the blog ID is set and is numeric.
@@ -58,7 +59,12 @@ function lpm_list_posts( $atts ) {
 
 			// Run the loop.
 			while ( $post_list->have_posts() ) : $post_list->the_post();
-				$html .= sprintf( '<li><a href="%1$s" target="_blank">%2$s</a></li>', esc_url( get_permalink() ), esc_html( get_the_title() ) );
+				$html .= sprintf(
+					'<li><a href="%1$s" target="_blank">%2$s%3$s</a></li>',
+					esc_url( get_permalink() ),
+					wp_kses_post( $atts['before_link'] ),
+					esc_html( get_the_title() )
+				);
 			endwhile;
 
 			$html .= '</ul>';
